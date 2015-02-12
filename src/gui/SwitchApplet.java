@@ -34,9 +34,6 @@ public class SwitchApplet extends PApplet {
             }
         }
         
-        selector = new Selector(this);
-        selector.setSelection(3, 3);
-        
     }
     
     public void setup() {
@@ -50,13 +47,63 @@ public class SwitchApplet extends PApplet {
     }
     
     public void draw() {
+        background(128);
+        
         for (int i = 0; i < blocks.length; i++) {
             for (int j = 0; j < blocks[0].length; j++) {
                 blocks[i][j].draw(i * BLOCK_WIDTH, j * BLOCK_HEIGHT);
             }
         }
-        
-        selector.draw();
+
+        if (selector != null) {
+            selector.draw();
+        }
     }
     
+    public void mouseClicked() {
+        if (selector == null) {
+            System.out.println("selector is null, reassigning");
+            //determine x and y of cursor
+            int x = (int) (mouseX / BLOCK_WIDTH);
+            int y = (int) (mouseY / BLOCK_HEIGHT);
+            selector = new Selector(this, x, y);
+        } else {
+            // a block has already been selected, this will try to swap
+
+            int clickedx = (int)(mouseX / BLOCK_WIDTH);
+            int clickedy = (int)(mouseY / BLOCK_HEIGHT);
+            
+            if (clickedx == selector.getx() && clickedy == selector.gety()) {
+                //same spot, deselect
+                selector = null;
+            } else if (clickedx == selector.getx() + 1 && clickedy == selector.gety()) {
+                //right adjacent
+                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                selector = null;
+            } else if (clickedx == selector.getx() - 1 && clickedy == selector.gety()) {
+                //left adjacent
+                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                selector = null;
+            } else if (clickedx == selector.getx() && clickedy == selector.gety() + 1) {
+                //down adjacent
+                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                selector = null;
+            } else if (clickedx == selector.getx() && clickedy == selector.gety() - 1) {
+                //up adjacent
+                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                selector = null;
+            } else {
+                //change selector to where it got clicked
+                System.out.println("moving selector to new spot");
+                selector = new Selector(this, clickedx, clickedy);
+            }
+        }
+    }
+    
+    
+    private void swapBlocks(int x1, int y1, int x2, int y2) {
+        Block temp = blocks[x1][y1];
+        blocks[x1][y1] = blocks[x2][y2];
+        blocks[x2][y2] = temp;
+    }
 }
