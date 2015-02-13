@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.List;
+
 import javax.swing.JFrame;
 
 import processing.core.*;
@@ -19,7 +21,8 @@ public class SwitchApplet extends PApplet {
     public static int BLOCK_WIDTH = GAME_WIDTH / NUM_BLOCKS_WIDTH;
     public static int BLOCK_HEIGHT = GAME_HEIGHT / NUM_BLOCKS_HEIGHT;
     
-    private Block[][] blocks;
+//    private Block[][] blocks;
+    private Grid<Block> blocks;
     
     private Selector selector;
     
@@ -27,10 +30,11 @@ public class SwitchApplet extends PApplet {
         super.frame = frame;
         
         //initialize and fill block array with new random blocks
-        blocks = new Block[NUM_BLOCKS_WIDTH][NUM_BLOCKS_HEIGHT];
-        for (int i = 0; i < blocks.length; i++) {
-            for (int j = 0; j < blocks[0].length; j++) {
-                blocks[i][j] = new Block(this);
+//        blocks = new Block[NUM_BLOCKS_WIDTH][NUM_BLOCKS_HEIGHT];
+        blocks = new Grid<Block>(NUM_BLOCKS_WIDTH, NUM_BLOCKS_HEIGHT);
+        for (int i = 0; i < blocks.getWidth(); i++) {
+            for (int j = 0; j < blocks.getHeight(); j++) {
+                blocks.put(i, j, new Block(this, blocks));
             }
         }
         
@@ -49,9 +53,9 @@ public class SwitchApplet extends PApplet {
     public void draw() {
         background(128);
         
-        for (int i = 0; i < blocks.length; i++) {
-            for (int j = 0; j < blocks[0].length; j++) {
-                blocks[i][j].draw(i * BLOCK_WIDTH, j * BLOCK_HEIGHT);
+        for (int i = 0; i < blocks.getWidth(); i++) {
+            for (int j = 0; j < blocks.getHeight(); j++) {
+                blocks.get(i, j).draw(i * BLOCK_WIDTH, j * BLOCK_HEIGHT);
             }
         }
 
@@ -78,19 +82,19 @@ public class SwitchApplet extends PApplet {
                 selector = null;
             } else if (clickedx == selector.getx() + 1 && clickedy == selector.gety()) {
                 //right adjacent
-                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                blocks.swap(clickedx, clickedy, selector.getx(), selector.gety());
                 selector = null;
             } else if (clickedx == selector.getx() - 1 && clickedy == selector.gety()) {
                 //left adjacent
-                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                blocks.swap(clickedx, clickedy, selector.getx(), selector.gety());
                 selector = null;
             } else if (clickedx == selector.getx() && clickedy == selector.gety() + 1) {
                 //down adjacent
-                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                blocks.swap(clickedx, clickedy, selector.getx(), selector.gety());
                 selector = null;
             } else if (clickedx == selector.getx() && clickedy == selector.gety() - 1) {
                 //up adjacent
-                swapBlocks(clickedx, clickedy, selector.getx(), selector.gety());
+                blocks.swap(clickedx, clickedy, selector.getx(), selector.gety());
                 selector = null;
             } else {
                 //change selector to where it got clicked
@@ -100,10 +104,22 @@ public class SwitchApplet extends PApplet {
         }
     }
     
-    
-    private void swapBlocks(int x1, int y1, int x2, int y2) {
-        Block temp = blocks[x1][y1];
-        blocks[x1][y1] = blocks[x2][y2];
-        blocks[x2][y2] = temp;
+    //tell if there is three blocks in a row and act on it if there is
+    private void update() {
+        
+        for (int i = 0; i < blocks.getWidth(); i++) {
+            for (int j = 0; j < blocks.getHeight(); j++) {
+                Block currentBlock = blocks.get(i, j);
+                List<Block> adjacents = blocks.getAdjacent(i, j);
+                for (Block b : adjacents) {
+                    if (currentBlock.sameType(b)) {
+                        //adjacent block is of the same type, check the next one in the same direction
+                        
+                    }
+                }
+            }
+        }
+        
     }
+    
 }

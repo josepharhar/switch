@@ -15,9 +15,13 @@ public class Block {
     //PApplet to draw on
     SwitchApplet applet;
     
+    Grid<Block> grid;
+    
     //random block
-    public Block(SwitchApplet applet) {
+    public Block(SwitchApplet applet, Grid<Block> grid) {
         this.applet = applet;
+        this.grid = grid;
+        
         type = (int) (Math.random() * MAX_TYPES);
         switch (type) {
         case 0:
@@ -46,5 +50,9 @@ public class Block {
     
     public int getType() {
         return type;
+    }
+    
+    public boolean sameType(Block other) {
+        return type == other.type;
     }
 }

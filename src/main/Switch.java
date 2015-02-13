@@ -1,6 +1,7 @@
 package main;
 
 import gui.SwitchApplet;
+import static gui.SwitchApplet.*;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -30,5 +31,7 @@ public class Switch {
         applet.init();
         
         frame.setVisible(true);
+        
+        frame.setSize(WIDTH, HEIGHT);
     }
 }
